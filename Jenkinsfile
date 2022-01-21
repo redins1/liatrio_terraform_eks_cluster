@@ -46,7 +46,7 @@ pipeline {
                 sh 'terraform init -input=false'
             }
         }
-        stage('Apply') {
+        stage('Destroy') {
             when {
                 expression { 
                     return params.ACTION == 'Destroy'
