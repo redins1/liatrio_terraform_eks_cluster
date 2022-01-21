@@ -1,35 +1,59 @@
 pipeline {
     agent any
-    parameters { 
-        choice(name: 'ACTION', choices: ['Create', 'Destroy'], description: 'Option what should happen via terraform') }
-    
-    if (${params.ACTION} == 'Create') {
-        stages {
-            stage('Plan') {
-                steps {
-                    sh 'terraform init -input=false'
-                    sh 'terraform plan -input=false'
-                }
-            }
-
-            stage('Apply') {
-                steps {
-                    sh 'terraform apply -auto-approve'
+    stages {
+        stage('Setup parameters') {
+            steps {
+                script { 
+                    properties([
+                        parameters([
+                            choice(
+                                choices: ['Create', 'Destroy'], 
+                                name: 'ACTION'
+                            )
+                        ])
+                    ])
                 }
             }
         }
-    } else if (${params.ACTION} == 'Destroy') {
-        stages {
-            stage('Init') {
-                steps {
-                    sh 'terraform init -input=false'
+        stage('Plan') {
+            when {
+                expression { 
+                    return params.ACTION == 'Create'
                 }
             }
-
-            stage('Apply') {
-                steps {
-                    sh 'terraform destroy -auto-approve'
+            steps {
+                sh 'terraform init -input=false'
+                sh 'terraform plan -input=false'
+            }
+        }
+        stage('Apply') {
+            when {
+                expression { 
+                    return params.ACTION == 'Create'
                 }
+            }
+            steps {
+                sh 'terraform apply -auto-approve'
+            }
+        }
+        stage('Init') {
+            when {
+                expression { 
+                    return params.ACTION == 'Destroy'
+                }
+            }
+            steps {
+                sh 'terraform init -input=false'
+            }
+        }
+        stage('Apply') {
+            when {
+                expression { 
+                    return params.ACTION == 'Destroy'
+                }
+            }
+            steps {
+                sh 'terraform destroy -auto-approve'
             }
         }
     }
