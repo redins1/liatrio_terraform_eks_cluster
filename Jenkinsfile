@@ -15,7 +15,7 @@ pipeline {
                 }
             }
         }
-        stage('Plan') {
+        stage('Terraform Plan') {
             when {
                 expression { 
                     return params.ACTION == 'Create'
@@ -26,7 +26,7 @@ pipeline {
                 sh 'terraform plan -input=false'
             }
         }
-        stage('Apply') {
+        stage('Terraform Apply') {
             when {
                 expression { 
                     return params.ACTION == 'Create'
@@ -36,7 +36,28 @@ pipeline {
                 sh 'terraform apply -auto-approve'
             }
         }
-        stage('Init') {
+        stage('Kubectl Apply') {
+            when {
+                expression { 
+                    return params.ACTION == 'Create'
+                }
+            }
+            steps {
+                sh 'aws eks update-kubeconfig --name liatrio-exercise-cluster'
+                sh 'kubectl apply -f manifest.yaml'
+            }
+        }
+        stage('Kubectl Delete') {
+            when {
+                expression { 
+                    return params.ACTION == 'Destroy'
+                }
+            }
+            steps {
+                sh 'kubectl delete -f manifest.yaml'
+            }
+        }
+        stage('Terraform Init') {
             when {
                 expression { 
                     return params.ACTION == 'Destroy'
@@ -46,7 +67,7 @@ pipeline {
                 sh 'terraform init -input=false'
             }
         }
-        stage('Destroy') {
+        stage('Terraform Destroy') {
             when {
                 expression { 
                     return params.ACTION == 'Destroy'
