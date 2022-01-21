@@ -18,7 +18,7 @@ pipeline {
                 }
             }
         }
-    } else if (${params.ACTION} == 'Destroy) {
+    } else if (${params.ACTION} == 'Destroy') {
         stages {
             stage('Init') {
                 steps {
