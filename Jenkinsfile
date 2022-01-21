@@ -3,22 +3,22 @@ pipeline {
     parameters { 
         choice(name: 'ACTION', choices: ['Create', 'Destroy'], description: 'Option what should happen via terraform') }
     
-    if (${params.ACTION}.equals("Create")) {
+    if (${params.ACTION} == 'Create') {
         stages {
             stage('Plan') {
                 steps {
                     sh 'terraform init -input=false'
-                    sh "terraform plan -input=false"
+                    sh 'terraform plan -input=false'
                 }
             }
 
             stage('Apply') {
                 steps {
-                    sh "terraform apply -auto-approve"
+                    sh 'terraform apply -auto-approve'
                 }
             }
         }
-    } else if (${params.ACTION}.equals("Destroy")) {
+    } else if (${params.ACTION} == 'Destroy) {
         stages {
             stage('Init') {
                 steps {
@@ -28,7 +28,7 @@ pipeline {
 
             stage('Apply') {
                 steps {
-                    sh "terraform destroy -auto-approve"
+                    sh 'terraform destroy -auto-approve'
                 }
             }
         }
