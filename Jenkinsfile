@@ -1,6 +1,9 @@
 pipeline {
     agent any
-    if (env.Action.equals("Create")) {
+    parameters { 
+        choice(name: 'ACTION', choices: ['Create', 'Destroy'], description: 'Option what should happen via terraform') }
+    
+    if (${params.ACTION}.equals("Create")) {
         stages {
             stage('Plan') {
                 steps {
@@ -15,7 +18,7 @@ pipeline {
                 }
             }
         }
-    } else if (env.Action.equals("Destroy")) {
+    } else if (${params.ACTION}.equals("Destroy")) {
         stages {
             stage('Init') {
                 steps {
