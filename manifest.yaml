@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: liatrio-exercise-deployment
+spec:
+  selector:
+    matchLabels:
+      app: liatrio-exercise
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: liatrio-exercise
+    spec:
+      containers:
+        - name: liatrio-exercise
+          image: 389566217404.dkr.ecr.us-east-1.amazonaws.com/liatrio_exercise:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+      imagePullSecrets:
+      - name: regcred
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: liatrio-exercise-service
+spec:
+  selector:
+    app: liatrio-exercise
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: LoadBalancer
+
