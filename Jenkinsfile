@@ -54,6 +54,7 @@ pipeline {
                 }
             }
             steps {
+                sh 'aws eks update-kubeconfig --name liatrio-exercise-cluster'
                 sh 'kubectl delete -f manifest.yaml'
             }
         }
